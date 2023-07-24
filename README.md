@@ -1,4 +1,5 @@
 # BloodGen
+> still a work in progress, need to understand how user directory works
 Bloodhunt account generator. Made with playwright. With reCaptcha solver support
 
 [![GPLv3 License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
