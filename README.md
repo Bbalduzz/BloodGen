@@ -14,6 +14,7 @@ Bloodhunt account generator. Made with playwright. With reCaptcha solver support
 - 1 account every 30 sec
 
 ## Future additions
+- solved recaptcha recognition
 - GUI application
 - automatic steam account unlink
 
