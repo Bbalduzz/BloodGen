@@ -1,15 +1,12 @@
-import contextlib
 from playwright.sync_api import sync_playwright
-from datetime import datetime
-import string, re, requests
-from random import choices, randint, choice
+import requests
+from random import choices
 from time import sleep
 from rich.console import Console
 from rich.table import Table
 import os
 import warnings
 import zipfile
-import json
 from src.names import generate_name
 from src.gmailnator import GmailNator
 
@@ -21,7 +18,7 @@ class BloodGen():
     def __init__(self):
         self.console           = Console()
         self.gmailnator        = GmailNator()
-        self.path_to_extension = self.update_extension()
+        self.update_extension()
         self.email             = self.gmailnator.generate()
         self.name              = generate_name()
         self.password          = ''.join(choices('abcdefghijklmnopqrstuvwxyz1234567890', k=8))
@@ -44,7 +41,7 @@ class BloodGen():
                     self.download_and_unzip(url=release["assets"][0]["browser_download_url"], extract_to="solver", zip_name=tag_name)
             self.console.print(":heavy_check_mark: Extension Updated")
             self.console.print(f"   └── [bold green]version: [bold yellow]{tag_name}")
-            return "solver"
+            self.path_to_extension = os.path.join(os.path.dirname(os.path.abspath(__file__)), "solver")
 
     def fill_form(self, page):
         with self.console.status("[bold green]Filling Form...") as status:
@@ -97,9 +94,7 @@ class BloodGen():
 
     def run(self, playwright):
         user_dir = 'bloodgen_user'
-        if not os.path.exists(user_dir): 
-            self.console.print("[bold red]WARNING [/bold red]: Please don't remove the bloodgen_user dir. It's needed for the context and extension to work")
-            return
+        if not os.path.exists(user_dir): os.makedirs(user_dir)
         context = playwright.chromium.launch_persistent_context(
             user_dir,
             headless=False,
@@ -108,6 +103,7 @@ class BloodGen():
                 f"--load-extension={self.path_to_extension}",
             ],
         )
+        context.add_cookies([{"name": "agegate", "value": "1", "domain": "bloodhunt.com", "path": "/"}])
         page = context.new_page()
         page.goto(BASE_URL)
         self.fill_form(page)
